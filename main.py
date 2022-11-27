@@ -17,6 +17,7 @@ class PianoForte(QWidget, Ui_PianoForte):
     def __init__(self):
         super(PianoForte, self).__init__()
         self.notes = ["C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs", "A", "As", "B"]
+        self.max_players = 10
         self.initUI()
         self.init_players()
 
@@ -50,18 +51,18 @@ class PianoForte(QWidget, Ui_PianoForte):
         self.Bbutton.clicked.connect(self.play)
 
     def init_players(self):
-        self.players = dict()
-        for note in self.notes:
-            media = QtCore.QUrl.fromLocalFile(f"\\Users\\mares\\PycharmProjects\\PianoForte\\res\\guitar\\{note}.mp3")
-            content = QtMultimedia.QMediaContent(media)
-            player = QtMultimedia.QMediaPlayer()
-            player.setMedia(content)
-            self.players[note] = player
+        self.players = list()
 
     def play(self):
         note = self.sender().note
-        self.players[note].stop()
-        self.players[note].play()
+        media = QtCore.QUrl.fromLocalFile(f"\\Users\\mares\\PycharmProjects\\PianoForte\\res\\guitar\\{note}.mp3")
+        content = QtMultimedia.QMediaContent(media)
+        player = QtMultimedia.QMediaPlayer()
+        player.setMedia(content)
+        player.play()
+        self.players.append(player)
+        while len(self.players) > self.max_players:
+            self.players.pop(0)
 
     def keyPressEvent(self, event) -> None:
         if event.key() == Qt.Key_A:
